@@ -43,13 +43,28 @@ const tasksContainerElement = document.getElementById('tasks-container');
 
 const inbox = new TaskList('inbox', tasksContainerElement);
 
+
 // Añadir tareas desde el DOM
-addDOMTask = ({key}) => {
-	if (key === 'Enter') {
+function addDOMTask(e){
+	if (e.key === 'Enter') {
 		const task = new Task(this.value);
 		inbox.addTask(task);
-		addTaskElement.value = null;
+		this.value = null;
 	}
-
-};
+}
 addTaskElement.addEventListener('keyup', addDOMTask);
+
+// Eliminar tareas desde el DOM
+function removeDOMTask(e){
+	if (e.target.tagName === 'A') {
+		console.dir('e');
+
+	}
+	// if (e.key === 'Enter') {
+	// 	const task = new Task(this.value);
+	// 	inbox.addTask(task);
+	// 	this.value = null;
+	// 	console.dir(this);
+	// }
+}
+tasksContainerElement.addEventListener('click', removeDOMTask);
