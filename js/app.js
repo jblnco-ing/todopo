@@ -1,7 +1,7 @@
 class Task{
-	constructor(name) {
+	constructor(name, isComplete = false) {
 		this.name = name;
-		this.isComplete = false;
+		this.isComplete = isComplete;
 	}
 
 	complete() {
@@ -20,18 +20,18 @@ class TaskList{
 
 	addTask(task) {
 		this.tasks.push(task);
-		// this.saveTasks(this.tasks);
+		console.log(task);
+		this.saveTasks(this.tasks);
 		this.renderTasks();
 	}
 
 	removeTask(i) {
 		this.tasks.splice(i,1);
-		// this.saveTasks(this.tasks);
+		this.saveTasks(this.tasks);
 		this.renderTasks();
 	}
 
 	renderTasks() {
-
 		let tasks = this.tasks.map((task) => `
 			<li class="task">
 				<input type="checkbox" ${task.isComplete? 'checked' : ''} class="task__complete-button">
@@ -43,13 +43,15 @@ class TaskList{
 	}
 
 	saveTasks(tasks){
-		localStorage.setItem("@todopo:tasks", tasks);
-		// localStorage.setItem("@todopo:tasks", JSON.stringify(tasks));
+ 		localStorage.setItem("@todopo:tasks", JSON.stringify(tasks));
 	}
 
-	loadTasks(tasks){
-		return localStorage.getItem("@todopo:tasks");
-		// localStorage.getItem("@todopo:tasks", JSON.stringify(tasks));
+	loadTasks(){
+		const tasks = JSON.parse(localStorage.getItem("@todopo:tasks"));
+		if (tasks) {
+			this.tasks = tasks.map((task) => new Task(task.name, task.isComplete));
+			this.renderTasks();
+		}
 	}
 }
 
@@ -58,6 +60,7 @@ const tasksContainerElement = document.getElementById('tasks-container');
 
 const inbox = new TaskList('inbox', tasksContainerElement);
 
+inbox.loadTasks();
 
 // Añadir tareas desde el DOM
 function addDOMTask(e){
