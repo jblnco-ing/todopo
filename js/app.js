@@ -9,6 +9,25 @@ class Task{
 	}
 }
 
+class Pomodoro{
+	constructor() {
+	  this.state = {};
+	}
+	//iniciar conteo
+	start() {
+
+	}
+	//detener conteo
+	stop(){
+
+	}
+	//contar cantidad de pomodoros
+	//
+
+
+
+}
+
 class TaskList{
 	constructor(name, element){
 		this.name = name;
