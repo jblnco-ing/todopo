@@ -10,22 +10,32 @@ class Task{
 }
 
 class Pomodoro{
-	constructor() {
-	  this.state = {};
+	constructor(pomodoroMin, freeMin) {
+	  this.pomodoroMin = pomodoroMin;
+	  this.freeMin = freeMin;
 	}
 	//iniciar conteo
 	start() {
-
+		this.runPomodoroTime();
 	}
 	//detener conteo
 	stop(){
 
 	}
 	//contar cantidad de pomodoros
-	//
+	runPomodoroTime(){
+		setTimeout(() => {
+		  this.runFreeTime();
+		  alert(this.pomodoroMin);
+		}, this.pomodoroMin * 60000);
+	}
 
-
-
+	runFreeTime(){
+		setTimeout(() => {
+		  this.runPomodoroTime()
+		  alert(this.freeMin);
+		}, this.freeMin * 60000);
+	}
 }
 
 class TaskList{
@@ -78,7 +88,9 @@ const addTaskElement = document.getElementById('add-task');
 const tasksContainerElement = document.getElementById('tasks-container');
 
 const inbox = new TaskList('inbox', tasksContainerElement);
+const pomodoro = new Pomodoro(1,0.5);
 
+pomodoro.start();
 inbox.loadTasks();
 
 // Añadir tareas desde el DOM
