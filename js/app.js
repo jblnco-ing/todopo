@@ -11,9 +11,11 @@ class Task{
 
 class Pomodoro{
 
-	constructor(pomodoroMin, freeMin) {
-	  this.pomodoroMin = pomodoroMin;
-	  this.freeMin = freeMin;
+	constructor(pomodoroMin, freeMin, element) {
+		this.ms = 0;
+		this.element = element;
+	  	this.pomodoroMin = pomodoroMin;
+  		this.freeMin = freeMin;
 	}
 	//iniciar conteo
 	start() {
@@ -41,13 +43,13 @@ class Pomodoro{
 	}
 
 	countDown(min){
-		let ms = min * 60000;
+		this.ms = min * 60000;
 		let myCountDown = setInterval(() => {
-		ms -= 1000;
-	  		let minutes = Math.floor(ms/(1000*60)),
-		  		seconds = Math.floor((ms%(1000*60))/1000);
-	  		document.body.innerHTML = `${minutes}:${seconds}`
-  			if (ms === 0) {
+		this.ms -= 1000;
+	  		let minutes = Math.floor(this.ms/(1000*60)),
+		  		seconds = Math.floor((this.ms%(1000*60))/1000);
+	  		this.element.innerHTML = `${minutes}:${seconds}`
+  			if (this.ms === 0) {
   				clearInterval(myCountDown);
   			}
 		}, 1000);
@@ -102,9 +104,9 @@ class TaskList{
 
 const addTaskElement = document.getElementById('add-task');
 const tasksContainerElement = document.getElementById('tasks-container');
-
+const pomodoroTimeElement = document.getElementById('pomodoro-time');
 const inbox = new TaskList('inbox', tasksContainerElement);
-const pomodoro = new Pomodoro(0.4,0.2);
+const pomodoro = new Pomodoro(0.4,0.2,pomodoroTimeElement);
 
 pomodoro.start();
 inbox.loadTasks();
