@@ -35,23 +35,24 @@ class Pomodoro{
 	}
 
 	runFreeTime(){
+		this.countDown(this.freeMin);
 		setTimeout(() => {
 	  	this.runPomodoroTime()
 		  // alert(this.freeMin);
 		}, this.freeMin * 60000);
-		this.countDown(this.freeMin);
 	}
 
 	countDown(min){
 		this.ms = min * 60000;
 		let myCountDown = setInterval(() => {
 		this.ms -= 1000;
+  			if (!this.ms) {
+  				clearInterval(myCountDown);
+  			}
 	  		let minutes = Math.floor(this.ms/(1000*60)),
 		  		seconds = Math.floor((this.ms%(1000*60))/1000);
 	  		this.element.innerHTML = `${minutes}:${seconds}`
-  			if (this.ms === 0) {
-  				clearInterval(myCountDown);
-  			}
+	  		console.log(this.ms);
 		}, 1000);
 	}
 }
