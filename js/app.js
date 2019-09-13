@@ -2,6 +2,7 @@ class Task{
 	constructor(name, isComplete = false) {
 		this.name = name;
 		this.isComplete = isComplete;
+		this.count = 0;
 	}
 
 	complete() {
@@ -14,12 +15,15 @@ class Pomodoro{
 	constructor(pomodoroMin, freeMin, element) {
 		this.ms = 0;
 		this.element = element;
+		this.count = 0;
+		this.countTask = 0;
 	  	this.pomodoroMin = pomodoroMin;
   		this.freeMin = freeMin;
 	}
 	//iniciar conteo
-	start() {
+	start(countTask) {
 		this.runPomodoroTime();
+		element.value++
 	}
 	//detener conteo
 	stop(){
@@ -31,6 +35,8 @@ class Pomodoro{
 		setTimeout(() => {
 	  	this.runFreeTime();
 		  // alert(this.pomodoroMin);
+		this.count++;  
+		console.log(this.count);
 		}, this.pomodoroMin * 60000);
 	}
 
@@ -46,13 +52,12 @@ class Pomodoro{
 		this.ms = min * 60000;
 		let myCountDown = setInterval(() => {
 		this.ms -= 1000;
-  			if (!this.ms) {
+  			if (this.ms<=0) {
   				clearInterval(myCountDown);
   			}
 	  		let minutes = Math.floor(this.ms/(1000*60)),
 		  		seconds = Math.floor((this.ms%(1000*60))/1000);
 	  		this.element.innerHTML = `${minutes}:${seconds}`
-	  		console.log(this.ms);
 		}, 1000);
 	}
 }
@@ -80,10 +85,12 @@ class TaskList{
 	}
 
 	renderTasks() {
-		let tasks = this.tasks.map((task) => `
+		let tasks = this.tasks.map((task,key) => `
 			<li class="task">
-				<input type="checkbox" ${task.isComplete? 'checked' : ''} class="task__complete-button">
+				<input type="checkbox" ${task.isComplete? 'checked' : ''} class="task__complete-button" name="task__complete-button">
 				<span class="task__name">${task.name}</span>
+				<input type="button" class="task__start-button" name="task__start-button" value="Start">
+				<span class="task__count" name="task__count" id="task__count_${key}">${task.count}</span>
 				<a href="#" class="task__remove-button">X</a>
 			</li>
 		`);
@@ -109,7 +116,6 @@ const pomodoroTimeElement = document.getElementById('pomodoro-time');
 const inbox = new TaskList('inbox', tasksContainerElement);
 const pomodoro = new Pomodoro(0.4,0.2,pomodoroTimeElement);
 
-pomodoro.start();
 inbox.loadTasks();
 
 // Añadir tareas desde el DOM
@@ -125,6 +131,13 @@ addTaskElement.addEventListener('keyup', addDOMTask);
 function getIndexTask(e) {
 	let taskItem = e.target.parentElement,
 		tasksItems = [...inbox.element.querySelectorAll('li')];
+	console.log(taskItem);
+	return tasksItems.indexOf(taskItem);
+}
+
+function getElementTask(e) {
+	let taskItem = e.target.parentElement,
+		tasksItems = [...inbox.element.querySelectorAll('li')];
 	return tasksItems.indexOf(taskItem);
 }
 
@@ -138,9 +151,24 @@ tasksContainerElement.addEventListener('click', removeDOMTask);
 
 // Completar tareas desde el DOM
 function completeDOMTask(e){
-	if (e.target.tagName === 'INPUT') {
+	if (
+		e.target.tagName === 'INPUT' 
+		&& e.target.type === 'checkbox' 
+		&& e.target.name === 'task__complete-button'
+	) {
 		inbox.tasks[getIndexTask(e)].complete();
+		inbox.saveTasks(inbox.tasks);
 	}
-		console.table(inbox.tasks);
 }
 tasksContainerElement.addEventListener('click', completeDOMTask);
+
+function runDOMPomodoro(e){
+	if (
+		e.target.tagName === 'INPUT' 
+		&& e.target.type === 'button' 
+		&& e.target.name === 'task__start-button'
+	) {
+		pomodoro.start();
+	}
+}
+tasksContainerElement.addEventListener('click', runDOMPomodoro);
